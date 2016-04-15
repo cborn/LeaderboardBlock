@@ -1,10 +1,10 @@
 Moodle Ranking block repository
 ===============================
 
-Edit: Kiya Govek changed Ranking points block to Badge leaderboard block
-Credit: Willian Mano for origina Ranking block
+>Edit: Kiya Govek changed Ranking points block to Badge leaderboard block
+>Credit: Willian Mano for original Ranking block
 
-This block improves gamification of a Moodle course by creating a leaderboard for badges.
+>This block improves gamification of a Moodle course by creating a leaderboard for badges.
 
 
 Update Notes
