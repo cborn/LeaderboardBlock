@@ -38,7 +38,7 @@ $string['table_name'] = 'Name';
 $string['table_points'] = 'Badges';
 $string['your_score'] = 'Your score';
 $string['see_full_leaderboard'] = 'See full individual ranking';
-$string['report_head'] = 'leaderboard details: First {$a} students';
+$string['report_head'] = 'Full individual ranking: {$a} students';
 
 // Global configuration.
 $string['leaderboardsize'] = 'Size of the leaderboard';
