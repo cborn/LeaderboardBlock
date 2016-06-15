@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 
 
 /**
- * Ranking block manager
+ * leaderboard block manager
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,13 +28,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Block ranking manager class.
+ * Block leaderboard manager class.
  *
- * @package    block_ranking
+ * @package    block_leaderboard
  * @copyright  2015 Willian Mano http://willianmano.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_ranking_manager {
+class block_leaderboard_manager {
 
     const DEFAULT_POINTS = 2;
 
@@ -136,9 +136,9 @@ class block_ranking_manager {
             }
         }
 
-        $rankingid = self::add_or_update_user_points($completion->userid, $completion->course, $points);
+        $leaderboardid = self::add_or_update_user_points($completion->userid, $completion->course, $points);
 
-        self::add_ranking_log($rankingid, $completion->course, $completion->coursemoduleid, $points);
+        self::add_leaderboard_log($leaderboardid, $completion->course, $completion->coursemoduleid, $points);
     }
 
     /**
@@ -219,7 +219,7 @@ class block_ranking_manager {
     protected static function add_or_update_user_points($userid, $courseid, $points) {
         global $DB;
 
-        $sql = "SELECT * FROM {ranking_points}
+        $sql = "SELECT * FROM {leaderboard_points}
                 WHERE userid = :userid AND courseid = :courseid";
         $params['userid'] = $userid;
         $params['courseid'] = $courseid;
@@ -236,14 +236,14 @@ class block_ranking_manager {
             $userpoints->timecreated = time();
             $userpoints->timemodified = time();
 
-            $rankingid = $DB->insert_record('ranking_points', $userpoints, true);
+            $leaderboardid = $DB->insert_record('leaderboard_points', $userpoints, true);
         } else {
             $userpoints->points = $userpoints->points + $points;
             $userpoints->timemodified = time();
-            $DB->update_record('ranking_points', $userpoints);
-            $rankingid = $userpoints->id;
+            $DB->update_record('leaderboard_points', $userpoints);
+            $leaderboardid = $userpoints->id;
         }
-        return $rankingid;
+        return $leaderboardid;
     }
 
     /**
@@ -255,17 +255,17 @@ class block_ranking_manager {
      * @param int
      * @return int
      */
-    protected static function add_ranking_log($rankingid, $courseid, $cmc, $points) {
+    protected static function add_leaderboard_log($leaderboardid, $courseid, $cmc, $points) {
         global $DB;
 
-        $rankinglog = new stdClass();
-        $rankinglog->rankingid = $rankingid;
-        $rankinglog->courseid = $courseid;
-        $rankinglog->course_modules_completion = $cmc;
-        $rankinglog->points = $points;
-        $rankinglog->timecreated = time();
+        $leaderboardlog = new stdClass();
+        $leaderboardlog->leaderboardid = $leaderboardid;
+        $leaderboardlog->courseid = $courseid;
+        $leaderboardlog->course_modules_completion = $cmc;
+        $leaderboardlog->points = $points;
+        $leaderboardlog->timecreated = time();
 
-        $logid = $DB->insert_record('ranking_logs', $rankinglog, true);
+        $logid = $DB->insert_record('leaderboard_logs', $leaderboardlog, true);
 
         return $logid;
     }
@@ -280,7 +280,7 @@ class block_ranking_manager {
         global $DB;
 
         if (empty(self::$config)) {
-            $records = $DB->get_records('config_plugins', array('plugin' => 'block_ranking'));
+            $records = $DB->get_records('config_plugins', array('plugin' => 'block_leaderboard'));
 
             foreach ($records as $key => $value) {
                 self::$config[$value->name] = $value->value;

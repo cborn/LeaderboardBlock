@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 
 
 /**
- * Ranking block capability setup
+ * leaderboard block capability setup
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-    'block/ranking:addinstance' => array(
+    'block/leaderboard:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
 
         'captype' => 'write',

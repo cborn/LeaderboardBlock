@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 
 
 /**
- * Ranking block helper
+ * leaderboard block helper
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,13 +28,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Block ranking helper class.
+ * Block leaderboard helper class.
  *
- * @package    block_ranking
+ * @package    block_leaderboard
  * @copyright  2015 Willian Mano http://willianmano.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_ranking_helper {
+class block_leaderboard_helper {
 
     /**
      * Observe the events, and dispatch them if necessary.
@@ -52,7 +52,7 @@ class block_ranking_helper {
 
         if ($event->eventname == '\mod_quiz\event\attempt_submitted') {
 
-            $enablemultipleattempts = $DB->get_record('config_plugins', array('plugin' => 'block_ranking', 'name' => 'enable_multiple_quizz_attempts'));
+            $enablemultipleattempts = $DB->get_record('config_plugins', array('plugin' => 'block_leaderboard', 'name' => 'enable_multiple_quizz_attempts'));
 
             if (isset($enablemultipleattempts) && $enablemultipleattempts->value == 0) {
                 $isrepeated = self::is_completion_repeated($event->courseid, $event->relateduserid, $event->contextinstanceid);
@@ -67,7 +67,7 @@ class block_ranking_helper {
             if ($objectid) {
                 $grade = self::get_quiz_grade($event->objectid);
 
-                block_ranking_manager::add_user_points($objectid, $grade);
+                block_leaderboard_manager::add_user_points($objectid, $grade);
             }
 
             return;
@@ -81,7 +81,7 @@ class block_ranking_helper {
             return;
         }
 
-        block_ranking_manager::add_user_points($event->objectid);
+        block_leaderboard_manager::add_user_points($event->objectid);
     }
 
     /**
@@ -159,8 +159,8 @@ class block_ranking_helper {
 
         $sql = "SELECT
                  count(*) as qtd
-                FROM {ranking_points} p
-                INNER JOIN {ranking_logs} l ON l.rankingid = p.id
+                FROM {leaderboard_points} p
+                INNER JOIN {leaderboard_logs} l ON l.leaderboardid = p.id
                 WHERE p.courseid = :courseid
                 AND p.userid = :userid
                 AND l.course_modules_completion = :cmcid";

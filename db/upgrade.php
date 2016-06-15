@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,23 +16,23 @@
 
 
 /**
- * Ranking block upgrade
+ * leaderboard block upgrade
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Upgrade the ranking block
+ * Upgrade the leaderboard block
  * @param int $oldversion
  * @param object $block
  * @return bool
  */
 
-function xmldb_block_ranking_upgrade($oldversion, $block) {
+function xmldb_block_leaderboard_upgrade($oldversion, $block) {
     global $DB;
 
     if ($oldversion < 2015030300) {
@@ -40,7 +40,7 @@ function xmldb_block_ranking_upgrade($oldversion, $block) {
         $dbman = $DB->get_manager();
 
         // Define table to be dropped.
-        $table = new xmldb_table('ranking_cmc_mirror');
+        $table = new xmldb_table('leaderboard_cmc_mirror');
         if ($dbman->table_exists($table)) {
             $dbman->drop_table($table);
         }
@@ -48,7 +48,7 @@ function xmldb_block_ranking_upgrade($oldversion, $block) {
 
     if ($oldversion > 2015030300 && $oldversion < 2015051800) {
         $criteria = array(
-            'plugin' => 'block_ranking',
+            'plugin' => 'block_leaderboard',
             'name' => 'lastcomputedid'
         );
 

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 
 
 /**
- * Ranking block definition
+ * leaderboard block definition
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,9 +28,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot.'/blocks/ranking/lib.php');
+require_once($CFG->dirroot.'/blocks/leaderboard/lib.php');
 
-class block_ranking extends block_base {
+class block_leaderboard extends block_base {
 
     /**
      * Sets the block title
@@ -38,7 +38,7 @@ class block_ranking extends block_base {
      * @return void
      */
     public function init() {
-        $this->title = get_string('ranking', 'block_ranking');
+        $this->title = get_string('leaderboard', 'block_leaderboard');
     }
 
     /**
@@ -47,9 +47,9 @@ class block_ranking extends block_base {
      * @return bool
      */
     public function specialization() {
-        $title = isset($this->config->ranking_title) ? trim($this->config->ranking_title) : '';
+        $title = isset($this->config->leaderboard_title) ? trim($this->config->leaderboard_title) : '';
         if (!empty($title)) {
-            $this->title = format_string($this->config->ranking_title);
+            $this->title = format_string($this->config->leaderboard_title);
         }
     }
 
@@ -77,35 +77,35 @@ class block_ranking extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        $rankingsize = isset($this->config->ranking_rankingsize) ? trim($this->config->ranking_rankingsize) : 0;
+        $leaderboardsize = isset($this->config->leaderboard_leaderboardsize) ? trim($this->config->leaderboard_leaderboardsize) : 0;
 
 //         $weekstart = strtotime(date('d-m-Y', strtotime('-'.date('w').' days')));
-//         $rankinglastweek = block_ranking_get_students_by_date($rankingsize, $weekstart, time());
+//         $leaderboardlastweek = block_leaderboard_get_students_by_date($leaderboardsize, $weekstart, time());
 // 
 //         $monthstart = strtotime(date('Y-m-01'));
-//         $rankinglastmonth = block_ranking_get_students_by_date($rankingsize, $monthstart, time());
+//         $leaderboardlastmonth = block_leaderboard_get_students_by_date($leaderboardsize, $monthstart, time());
 // 
-//         $rankinggeral = block_ranking_get_groups($rankingsize);
+//         $leaderboardgeral = block_leaderboard_get_groups($leaderboardsize);
 // 
-//         $rankingstables = block_ranking_print_students($rankinglastmonth, $rankinglastweek, $rankinggeral);
+//         $leaderboardstables = block_leaderboard_print_students($leaderboardlastmonth, $leaderboardlastweek, $leaderboardgeral);
 
-        $rankingstudents = block_ranking_get_students($rankingsize);
+        $leaderboardstudents = block_leaderboard_get_students($leaderboardsize);
         
-        $rankinggroups = block_ranking_get_groups($this->config);
+        $leaderboardgroups = block_leaderboard_get_groups($this->config);
         
-        $rankingstables = block_ranking_print_tables($rankinggroups, $rankingstudents);
+        $leaderboardstables = block_leaderboard_print_tables($leaderboardgroups, $leaderboardstudents);
 
-        $individualranking = block_ranking_print_individual_ranking();
+        $individualleaderboard = block_leaderboard_print_individual_leaderboard();
 
-        $this->content->text = $rankingstables . $individualranking;
+        $this->content->text = $leaderboardstables . $individualleaderboard;
 
         $this->content->footer .= html_writer::tag('p',
                                         html_writer::link(
                                             new moodle_url(
-                                                '/blocks/ranking/report.php',
+                                                '/blocks/leaderboard/report.php',
                                                 array('courseid' => $this->page->course->id)
                                             ),
-                                            get_string('see_full_ranking', 'block_ranking'),
+                                            get_string('see_full_leaderboard', 'block_leaderboard'),
                                             array('class' => 'btn btn-default')
                                         )
                                   );

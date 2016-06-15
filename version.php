@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 
 
 /**
- * Ranking block version details
+ * leaderboard block version details
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,4 +31,4 @@ $plugin->version   = 2015081300;
 $plugin->requires  = 2011120511;
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = 'Version for Moodle 2.9 onwards';
-$plugin->component = 'block_ranking';
+$plugin->component = 'block_leaderboard';

@@ -19,15 +19,15 @@
  * Ranking block english language translation
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Ranking block';
-$string['ranking'] = 'Ranking';
-$string['ranking:addinstance'] = 'Add a new ranking block';
+$string['pluginname'] = 'Leaderboard block';
+$string['leaderboard'] = 'Leaderboard';
+$string['leaderboard:addinstance'] = 'Add a new leaderboard block';
 
 $string['nostudents'] = 'No students to show';
 $string['nogroups'] = 'No groups to show';
@@ -37,32 +37,18 @@ $string['table_position'] = 'Pos';
 $string['table_name'] = 'Name';
 $string['table_points'] = 'Badges';
 $string['your_score'] = 'Your score';
-$string['see_full_ranking'] = 'See full ranking';
-$string['report_head'] = 'Ranking details: First {$a} students';
+$string['see_full_leaderboard'] = 'See full individual ranking';
+$string['report_head'] = 'leaderboard details: First {$a} students';
 
 // Global configuration.
-$string['rankingsize'] = 'Size of the ranking';
-$string['rankingsize_help'] = 'Number of students that will appear in ranking';
-$string['configuration'] = 'Block Ranking configuration';
-$string['config_ranking_displaygrouping'] = 'Grouping';
-$string['config_ranking_displaygrouping_help'] = 'Grouping that will be shown in the groups ranking';
+$string['leaderboardsize'] = 'Size of the leaderboard';
+$string['leaderboardsize_help'] = 'Number of students that will appear in leaderboard';
+$string['configuration'] = 'Block leaderboard configuration';
+$string['config_leaderboard_displaygrouping'] = 'Grouping';
+$string['config_leaderboard_displaygrouping_help'] = 'Grouping that will be shown in the groups leaderboard';
 
-// Activites points.
-$string['resourcepoints'] = 'Points to resource';
-$string['assignpoints'] = 'Points to assign';
-$string['forumpoints'] = 'Points to forum';
-$string['pagepoints'] = 'Points to page';
-$string['workshoppoints'] = 'Points to workshop';
-$string['defaultpoints'] = 'Default points';
-
-$string['monthly'] = 'Monthly';
-$string['weekly'] = 'Weekly';
-$string['general'] = 'General';
 $string['groups'] = 'Groups';
 $string['individual'] = 'Individual';
 
 $string['yes'] = 'Yes';
 $string['no'] = 'No';
-
-$string['enable_multiple_quizz_attempts'] = 'Enable multiple quizz attempts';
-$string['enable_multiple_quizz_attempts_help'] = 'Enable studens to add points in every quizz attempt. If this options is marked as NO, the student only will receive the points of the first attempt.';

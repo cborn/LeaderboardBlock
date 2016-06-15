@@ -1,8 +1,8 @@
-M.block_ranking = {};
+M.block_leaderboard = {};
 
-M.block_ranking.init_tabview = function(Y) {
+M.block_leaderboard.init_tabview = function(Y) {
     Y.use("tabview", function(Y) {
-        var tabview = new Y.TabView({srcNode:'#ranking-tabs'});
+        var tabview = new Y.TabView({srcNode:'#leaderboard-tabs'});
         tabview.render();
     });
 };

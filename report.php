@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 
 
 /**
- * Ranking block - report page
+ * leaderboard block - report page
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@
 
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->dirroot.'/blocks/ranking/lib.php');
+require_once($CFG->dirroot.'/blocks/leaderboard/lib.php');
 
 define('DEFAULT_PAGE_SIZE', 100);
 
@@ -42,7 +42,7 @@ require_login($courseid);
 $context = context_course::instance($courseid);
 
 // Some stuff.
-$url = new moodle_url('/blocks/ranking/report.php', array('courseid' => $courseid));
+$url = new moodle_url('/blocks/leaderboard/report.php', array('courseid' => $courseid));
 if ($action) {
     $url->param('action', $action);
 }
@@ -50,7 +50,7 @@ if ($action) {
 // Page info.
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('course');
-$PAGE->set_title($course->fullname.': General Ranking');
+$PAGE->set_title($course->fullname.': General leaderboard');
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->set_url($url);
 
@@ -82,9 +82,9 @@ $sql = "SELECT $userfields,
 
 $students = array_values($DB->get_records_sql($sql, $params));
 
-$strcoursereport = get_string('nostudents', 'block_ranking');;
+$strcoursereport = get_string('nostudents', 'block_leaderboard');;
 if (count($students)) {
-    $strcoursereport = get_string('report_head', 'block_ranking', count($students));
+    $strcoursereport = get_string('report_head', 'block_leaderboard', count($students));
 }
 
 echo $OUTPUT->header();
@@ -92,7 +92,7 @@ echo $OUTPUT->heading($strcoursereport);
 $PAGE->set_title($strcoursereport);
 
 // Output group selector if there are groups in the course.
-echo $OUTPUT->container_start('ranking-report');
+echo $OUTPUT->container_start('leaderboard-report');
 
 if (has_capability('moodle/site:accessallgroups', $context)) {
     $groups = groups_get_all_groups($course->id);

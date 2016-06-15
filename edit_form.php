@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 
 
 /**
- * Ranking block configuration form definition
+ * leaderboard block configuration form definition
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,21 +27,21 @@
 
 require_once("$CFG->libdir/formslib.php");
 
-class block_ranking_edit_form extends block_edit_form {
+class block_leaderboard_edit_form extends block_edit_form {
 
     public function specific_definition($mform) {
         global $CFG, $DB, $COURSE;
 
-        $mform->addElement('header', 'displayinfo', get_string('configuration', 'block_ranking'));
+        $mform->addElement('header', 'displayinfo', get_string('configuration', 'block_leaderboard'));
 
-        $mform->addElement('text', 'config_ranking_title', get_string('blocktitle', 'block_ranking'));
-        $mform->setDefault('config_ranking_title', get_string('ranking', 'block_ranking'));
-        $mform->addRule('config_ranking_title', null, 'required', null, 'client');
+        $mform->addElement('text', 'config_leaderboard_title', get_string('blocktitle', 'block_leaderboard'));
+        $mform->setDefault('config_leaderboard_title', get_string('leaderboard', 'block_leaderboard'));
+        $mform->addRule('config_leaderboard_title', null, 'required', null, 'client');
         $mform->setType('config_title', PARAM_MULTILANG);
 
-        $mform->addElement('text', 'config_ranking_rankingsize', get_string('rankingsize', 'block_ranking'));
-        $mform->setDefault('config_ranking_rankingsize', get_config('block_ranking','rankingsize'));
-        $mform->setType('config_ranking_rankingsize', PARAM_INT);
+        $mform->addElement('text', 'config_leaderboard_leaderboardsize', get_string('leaderboardsize', 'block_leaderboard'));
+        $mform->setDefault('config_leaderboard_leaderboardsize', get_config('block_leaderboard','leaderboardsize'));
+        $mform->setType('config_leaderboard_leaderboardsize', PARAM_INT);
         
         // select which grouping to show
         $sql = "SELECT gr.name AS name
@@ -54,9 +54,9 @@ class block_ranking_edit_form extends block_edit_form {
             $groupings_list[] = $gr->name;
         }
         
-        $mform->addElement('select', 'config_ranking_displaygrouping', 
-            get_string('config_ranking_displaygrouping', 'block_ranking'), $groupings_list);
-        $mform->addHelpButton('config_ranking_displaygrouping', 'config_ranking_displaygrouping', 'block_ranking');
+        $mform->addElement('select', 'config_leaderboard_displaygrouping', 
+            get_string('config_leaderboard_displaygrouping', 'block_leaderboard'), $groupings_list);
+        $mform->addHelpButton('config_leaderboard_displaygrouping', 'config_leaderboard_displaygrouping', 'block_leaderboard');
         
         
         

@@ -1,5 +1,5 @@
 <?php
-// This file is part of Ranking block for Moodle - http://moodle.org/
+// This file is part of leaderboard block for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 
 
 /**
- * Ranking block definition
+ * leaderboard block definition
  *
  * @package    contrib
- * @subpackage block_ranking
+ * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
  * @authors    Willian Mano
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,21 +31,21 @@ define ('DEFAULT_POINTS', 2);
 $coursescontexts = array();
 
 /**
- * Return the list of students in the course ranking
+ * Return the list of students in the course leaderboard
  *
  * @param int
  * @return mixed
  */
-function block_ranking_get_students($limit = null) {
+function block_leaderboard_get_students($limit = null) {
     global $COURSE, $DB, $PAGE;
 
-    // Get block ranking configuration.
-    $cfgranking = get_config('block_ranking');
+    // Get block leaderboard configuration.
+    $cfgleaderboard = get_config('block_leaderboard');
 
     // Get limit from default configuration or instance configuration.
     if (!$limit) {
-        if (isset($cfgranking->rankingsize) && trim($cfgranking->rankingsize) != '') {
-            $limit = $cfgranking->rankingsize;
+        if (isset($cfgleaderboard->leaderboardsize) && trim($cfgleaderboard->leaderboardsize) != '') {
+            $limit = $cfgleaderboard->leaderboardsize;
         } else {
             $limit = 5;
         }
@@ -78,18 +78,18 @@ function block_ranking_get_students($limit = null) {
     return $users;
 }
 
-function block_ranking_print_tables($rankinggroups, $rankingstudents) {
+function block_leaderboard_print_tables($leaderboardgroups, $leaderboardstudents) {
     global $PAGE;
     
-    $tablegroups = generate_group_table($rankinggroups);
-    $tablestudents = generate_table($rankingstudents);
+    $tablegroups = generate_group_table($leaderboardgroups);
+    $tablestudents = generate_table($leaderboardstudents);
     
-    $PAGE->requires->js_init_call('M.block_ranking.init_tabview');
+    $PAGE->requires->js_init_call('M.block_leaderboard.init_tabview');
 
-    return '<div id="ranking-tabs">
+    return '<div id="leaderboard-tabs">
                 <ul>
-                    <li><a href="#mensal">'.get_string('groups', 'block_ranking').'</a></li>
-                    <li><a href="#geral">'.get_string('individual', 'block_ranking').'</a></li>
+                    <li><a href="#mensal">'.get_string('groups', 'block_leaderboard').'</a></li>
+                    <li><a href="#geral">'.get_string('individual', 'block_leaderboard').'</a></li>
                 </ul>
                 <div>
                     <div id="mensal">'.$tablegroups.'</div>
@@ -99,22 +99,22 @@ function block_ranking_print_tables($rankinggroups, $rankingstudents) {
 }
 
 /**
- * Print the student individual ranking points
+ * Print the student individual leaderboard points
  *
  * @return string
  */
-function block_ranking_print_individual_ranking() {
+function block_leaderboard_print_individual_leaderboard() {
     global $USER, $COURSE;
 
     if (!is_student($USER->id)) {
         return '';
     }
 
-    $totalpoints = block_ranking_get_student_points($USER->id);
+    $totalpoints = block_leaderboard_get_student_points($USER->id);
     $totalpoints = $totalpoints->points != null ? $totalpoints->points : '0';
-    $totalpoints = $totalpoints . " " . strtolower(get_string('table_points', 'block_ranking'));
+    $totalpoints = $totalpoints . " " . strtolower(get_string('table_points', 'block_leaderboard'));
 
-    return "<h5>".get_string('your_score', 'block_ranking').": ".$totalpoints."</h5>";
+    return "<h5>".get_string('your_score', 'block_leaderboard').": ".$totalpoints."</h5>";
 }
 
 /**
@@ -123,7 +123,7 @@ function block_ranking_print_individual_ranking() {
  * @param int
  * @return mixed
  */
-function block_ranking_get_student_points($userid) {
+function block_leaderboard_get_student_points($userid) {
     global $COURSE, $DB;
 
     $sql = "SELECT COUNT(bi.badgeid) as points
@@ -138,7 +138,7 @@ function block_ranking_get_student_points($userid) {
 }
 
 /**
- * Return a table of ranking based on data passed
+ * Return a table of leaderboard based on data passed
  *
  * @param mixed
  * @return mixed
@@ -147,22 +147,22 @@ function generate_table($data) {
     global $USER, $OUTPUT;
 
     if (empty($data)) {
-        return get_string('nostudents', 'block_ranking');
+        return get_string('nostudents', 'block_leaderboard');
     }
 
     $table = new html_table();
-    $table->attributes = array("class" => "rankingTable table table-striped generaltable");
+    $table->attributes = array("class" => "leaderboardTable table table-striped generaltable");
     $table->head = array(
-                        get_string('table_position', 'block_ranking'),
-                        get_string('table_name', 'block_ranking'),
-                        get_string('table_points', 'block_ranking')
+                        get_string('table_position', 'block_leaderboard'),
+                        get_string('table_name', 'block_leaderboard'),
+                        get_string('table_points', 'block_leaderboard')
                     );
     $lastpos = 1;
     $lastpoints = current($data)->points;
     for ($i = 0; $i < count($data); $i++) {
         $row = new html_table_row();
 
-        // Verify if the logged user is one user in ranking.
+        // Verify if the logged user is one user in leaderboard.
         if ($data[$i]->id == $USER->id) {
             $row->attributes = array('class' => 'itsme');
         }
@@ -185,7 +185,7 @@ function generate_table($data) {
 
 /**
 * Kiya Govek
-* Return a table of ranking based on group data passed
+* Return a table of leaderboard based on group data passed
 *
 * @param mixed
 * @return mixed
@@ -194,21 +194,21 @@ function generate_group_table($data) {
     global $USER, $OUTPUT;
 
     if (empty($data)) {
-        return get_string('nogroups', 'block_ranking');
+        return get_string('nogroups', 'block_leaderboard');
     }
     $table = new html_table();
-    $table->attributes = array("class" => "rankingTable table table-striped generaltable");
+    $table->attributes = array("class" => "leaderboardTable table table-striped generaltable");
     $table->head = array(
-                        get_string('table_position', 'block_ranking'),
-                        get_string('table_name', 'block_ranking'),
-                        get_string('table_points', 'block_ranking')
+                        get_string('table_position', 'block_leaderboard'),
+                        get_string('table_name', 'block_leaderboard'),
+                        get_string('table_points', 'block_leaderboard')
                     );
     $lastpos = 1;
     $lastpoints = current($data)->points;
     for ($i = 0; $i < count($data); $i++) {
         $row = new html_table_row();
 
-        // Verify if the logged user is one user in ranking.
+        // Verify if the logged user is one user in leaderboard.
         if (is_user_group($data[$i]->groupid, $USER->id)) {
             $row->attributes = array('class' => 'itsme');
         }
@@ -247,7 +247,7 @@ function is_student($userid) {
 * @param stdClass config info
 * @return mixed
 */
-function block_ranking_get_groups($config) {
+function block_leaderboard_get_groups($config) {
     global $COURSE, $DB, $PAGE;
 
     $context = $PAGE->context;
@@ -273,9 +273,9 @@ function block_ranking_get_groups($config) {
 		ORDER BY points DESC";
     $params['courseid'] = $COURSE->id;
     $params['badgecourseid'] = $COURSE->id;
-    if (isset($config->ranking_displaygrouping)) {
+    if (isset($config->leaderboard_displaygrouping)) {
         $groupings_list = get_groupings();
-        $groupings_index = $config->ranking_displaygrouping;
+        $groupings_index = $config->leaderboard_displaygrouping;
         $params['groupingid'] = $groupings_list[$groupings_index]->id;
     } else {
         $params['groupingid'] = 0;
