@@ -11,14 +11,7 @@ Update Notes
 ------------
 > Changed SQL to assign points based on number of badges earned
 > Changed interface to accomodate groups rather than weekly/monthly
-> TODO: Change to show students/groups with 0 points
-
-TODO
-------------
-> Change language files to mimic point to badge conversion
-> Change block name to mimic point to badge conversion
-> Complete SQL conversion to badges
-> Edit visuals as needed
+> Added toggles for individual and group leaderboards
 
 
 Installation

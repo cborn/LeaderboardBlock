@@ -21,7 +21,7 @@
  * @package    contrib
  * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
- * @authors    Willian Mano
+ * @authors    Willian Mano, edits by Kiya Govek
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -42,6 +42,7 @@ class block_leaderboard_edit_form extends block_edit_form {
         $mform->addElement('text', 'config_leaderboard_leaderboardsize', get_string('leaderboardsize', 'block_leaderboard'));
         $mform->setDefault('config_leaderboard_leaderboardsize', get_config('block_leaderboard','leaderboardsize'));
         $mform->setType('config_leaderboard_leaderboardsize', PARAM_INT);
+        $mform->addHelpButton('config_leaderboard_leaderboardsize', 'config_leaderboard_displaygrouping', 'block_leaderboard');
         
         // select which grouping to show
         $sql = "SELECT gr.name AS name
@@ -58,7 +59,11 @@ class block_leaderboard_edit_form extends block_edit_form {
             get_string('config_leaderboard_displaygrouping', 'block_leaderboard'), $groupings_list);
         $mform->addHelpButton('config_leaderboard_displaygrouping', 'config_leaderboard_displaygrouping', 'block_leaderboard');
         
-        
+        $mform->addElement('advcheckbox', 'config_leaderboard_grouptab',
+            get_string('config_leaderboard_grouptab', 'block_leaderboard'));
+            
+        $mform->addElement('advcheckbox', 'config_leaderboard_individualtab',
+            get_string('config_leaderboard_individualtab', 'block_leaderboard'));
         
     }
 }

@@ -21,7 +21,7 @@
  * @package    contrib
  * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
- * @authors    Willian Mano
+ * @authors    Willian Mano, edits by Kiya Govek
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

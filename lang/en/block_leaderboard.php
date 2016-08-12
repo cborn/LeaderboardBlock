@@ -21,7 +21,7 @@
  * @package    contrib
  * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
- * @authors    Willian Mano
+ * @authors    Willian Mano, edits by Kiya Govek
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -46,6 +46,8 @@ $string['leaderboardsize_help'] = 'Number of students that will appear in leader
 $string['configuration'] = 'Block leaderboard configuration';
 $string['config_leaderboard_displaygrouping'] = 'Grouping';
 $string['config_leaderboard_displaygrouping_help'] = 'Grouping that will be shown in the groups leaderboard';
+$string['config_leaderboard_grouptab'] = "Show group leaderboard";
+$string['config_leaderboard_individualtab'] = "Show individual leaderboard";
 
 $string['groups'] = 'Groups';
 $string['individual'] = 'Individual';

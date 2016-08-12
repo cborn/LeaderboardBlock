@@ -21,7 +21,7 @@
  * @package    contrib
  * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
- * @authors    Willian Mano
+ * @authors    Willian Mano, edits by Kiya Govek
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -79,36 +79,31 @@ class block_leaderboard extends block_base {
 
         $leaderboardsize = isset($this->config->leaderboard_leaderboardsize) ? trim($this->config->leaderboard_leaderboardsize) : 0;
 
-//         $weekstart = strtotime(date('d-m-Y', strtotime('-'.date('w').' days')));
-//         $leaderboardlastweek = block_leaderboard_get_students_by_date($leaderboardsize, $weekstart, time());
-// 
-//         $monthstart = strtotime(date('Y-m-01'));
-//         $leaderboardlastmonth = block_leaderboard_get_students_by_date($leaderboardsize, $monthstart, time());
-// 
-//         $leaderboardgeral = block_leaderboard_get_groups($leaderboardsize);
-// 
-//         $leaderboardstables = block_leaderboard_print_students($leaderboardlastmonth, $leaderboardlastweek, $leaderboardgeral);
-
         $leaderboardstudents = block_leaderboard_get_students($leaderboardsize);
         
         $leaderboardgroups = block_leaderboard_get_groups($this->config);
         
-        $leaderboardstables = block_leaderboard_print_tables($leaderboardgroups, $leaderboardstudents);
+        $grouptabset = isset($this->config->leaderboard_grouptab) ? $this->config->leaderboard_grouptab : 0;
+        $individualtabset = isset($this->config->leaderboard_grouptab) ? $this->config->leaderboard_individualtab : 0;
+        
+        $leaderboardstables = block_leaderboard_print_tables($leaderboardgroups, $leaderboardstudents,
+                            $grouptabset,$individualtabset);
 
         $individualleaderboard = block_leaderboard_print_individual_leaderboard();
 
         $this->content->text = $leaderboardstables . $individualleaderboard;
-
-        $this->content->footer .= html_writer::tag('p',
-                                        html_writer::link(
-                                            new moodle_url(
-                                                '/blocks/leaderboard/report.php',
-                                                array('courseid' => $this->page->course->id)
-                                            ),
-                                            get_string('see_full_leaderboard', 'block_leaderboard'),
-                                            array('class' => 'btn btn-default')
-                                        )
-                                  );
+        
+        //adds full ranking button
+//         $this->content->footer .= html_writer::tag('p',
+//                                         html_writer::link(
+//                                             new moodle_url(
+//                                                 '/blocks/leaderboard/report.php',
+//                                                 array('courseid' => $this->page->course->id)
+//                                             ),
+//                                             get_string('see_full_leaderboard', 'block_leaderboard'),
+//                                             array('class' => 'btn btn-default')
+//                                         )
+//                                   );
 
         return $this->content;
     }

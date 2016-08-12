@@ -21,7 +21,7 @@
  * @package    contrib
  * @subpackage block_ranking -> changed to block_leaderboard by Kiya Govek
  * @copyright  2015 Willian Mano http://willianmano.net
- * @authors    Willian Mano
+ * @authors    Willian Mano, edits by Kiya Govek
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -59,6 +59,7 @@ function block_leaderboard_get_students($limit = null) {
     $sql = "SELECT $userfields,
             b.name as badgename,
             bi.badgeid as badgeid,
+            c.id as contextid,
             COUNT(bi.badgeid) as points
         FROM {user} u
         LEFT JOIN {badge_issued} bi ON bi.userid = u.id
@@ -78,24 +79,44 @@ function block_leaderboard_get_students($limit = null) {
     return $users;
 }
 
-function block_leaderboard_print_tables($leaderboardgroups, $leaderboardstudents) {
+function block_leaderboard_print_tables($leaderboardgroups, $leaderboardstudents, $grouptabset, $individualtabset) {
     global $PAGE;
     
     $tablegroups = generate_group_table($leaderboardgroups);
     $tablestudents = generate_table($leaderboardstudents);
     
     $PAGE->requires->js_init_call('M.block_leaderboard.init_tabview');
-
-    return '<div id="leaderboard-tabs">
+    
+    if ($grouptabset && $individualtabset) {
+        return '<div id="leaderboard-tabs">
                 <ul>
-                    <li><a href="#mensal">'.get_string('groups', 'block_leaderboard').'</a></li>
-                    <li><a href="#geral">'.get_string('individual', 'block_leaderboard').'</a></li>
+                    <li><a href="#groups">'.get_string('groups', 'block_leaderboard').'</a></li>
+                    <li><a href="#individual">'.get_string('individual', 'block_leaderboard').'</a></li>
                 </ul>
                 <div>
-                    <div id="mensal">'.$tablegroups.'</div>
-                    <div id="geral">'.$tablestudents.'</div>
+                    <div id="groups">'.$tablegroups.'</div>
+                    <div id="individual">'.$tablestudents.'</div>
                 </div>
             </div>';
+    } else if ($individualtabset) {
+        return '<div id="leaderboard-tabs">
+                <ul>
+                    <li><a href="#individual">'.get_string('individual', 'block_leaderboard').'</a></li>
+                </ul>
+                <div>
+                    <div id="individual">'.$tablestudents.'</div>
+                </div>
+            </div>';
+    } else {
+        return '<div id="leaderboard-tabs">
+                <ul>
+                    <li><a href="#groups">'.get_string('groups', 'block_leaderboard').'</a></li>
+                </ul>
+                <div>
+                    <div id="groups">'.$tablegroups.'</div>
+                </div>
+            </div>';
+    }
 }
 
 /**
@@ -144,7 +165,7 @@ function block_leaderboard_get_student_points($userid) {
  * @return mixed
  */
 function generate_table($data) {
-    global $USER, $OUTPUT;
+    global $USER, $OUTPUT, $PAGE;
 
     if (empty($data)) {
         return get_string('nostudents', 'block_leaderboard');
@@ -171,12 +192,22 @@ function generate_table($data) {
             $lastpos++;
             $lastpoints = $data[$i]->points;
         }
-
+        
+        $user_contextid = get_user_contextid($data[$i]->id);
+        
+        $userpictureurl = moodle_url::make_pluginfile_url($user_contextid, 'user', 'icon', $PAGE->theme->name, '/', 'f2');
+        $userpictureurl->param('rev', $data[$i]->picture);
+                    
         $row->cells = array(
-                        $lastpos,
-                        $OUTPUT->user_picture($data[$i], array('size' => 24, 'alttext' => false)) . ' '.$data[$i]->firstname,
-                        $data[$i]->points
-                    );
+                $lastpos,
+                $data[$i]->picture ?'<img class="userpicture" src="'.$userpictureurl.'"'.
+                ' alt="Picture of '.$data[$i]->firstname.' '.$data[$i]->lastname.
+                '" title="Picture of'.$data[$i]->firstname.' '.$data[$i]->lastname.
+                '"/>'.
+                ' '.$data[$i]->firstname : $data[$i]->firstname,
+                $data[$i]->points
+            );
+            
         $table->data[] = $row;
     }
 
@@ -203,27 +234,74 @@ function generate_group_table($data) {
                         get_string('table_name', 'block_leaderboard'),
                         get_string('table_points', 'block_leaderboard')
                     );
-    $lastpos = 1;
-    $lastpoints = current($data)->points;
-    for ($i = 0; $i < count($data); $i++) {
-        $row = new html_table_row();
+    
+    $lastpos = 0;
+    $num_users = num_users_group(current($data)->groupid);
+    $copy_data = $data;
+    $length_data = count($data);
+    $sort_index = 0;
+    while ($sort_index < $length_data) {
+        // Find highest data value (for selection sort)
+        $i = $sort_index;
+        $temp_i = $sort_index;
+        $highest_value = 0;
+        while ($temp_i < $length_data) {
+            $num_users = num_users_group($copy_data[$temp_i]->groupid);
+            $points = $copy_data[$temp_i]->badges / $num_users;
+            $points = number_format((float)$points, 2, '.', ' ');
+            if ($points > $highest_value) {
+                $highest_value = $points;
+                $i = $temp_i;
+            }
+            $temp_i++;
+        }
+        
+    
+        $row = new html_table_row();    
 
         // Verify if the logged user is one user in leaderboard.
-        if (is_user_group($data[$i]->groupid, $USER->id)) {
+        if (is_user_group($copy_data[$i]->groupid, $USER->id)) {
             $row->attributes = array('class' => 'itsme');
         }
 
-        if ($lastpoints > $data[$i]->points) {
-            $lastpos++;
-            $lastpoints = $data[$i]->points;
-        }
+        $num_users = num_users_group($copy_data[$i]->groupid);
+        $points = $copy_data[$i]->badges / $num_users;
+        $points = number_format((float)$points, 2, '.', ' ');
+        
+        
+        $grouppictureurl = moodle_url::make_pluginfile_url($copy_data[$i]->contextid, 'group', 'icon', $copy_data[$i]->groupid, '/', 'f2');
+        $grouppictureurl->param('rev', $copy_data[$i]->grouppicture);
 
         $row->cells = array(
                         $lastpos,
-                        $data[$i]->groupname,
-                        $data[$i]->points
-                    );
+                        $copy_data[$i]->grouppicture ?'<img class="grouppicture" src="'.$grouppictureurl.'"'.
+                        ' alt="'.$copy_data[$i]->groupname.'" title="'.$copy_data[$i]->groupname.
+                        '" width="20" height="20"/>'.
+                        ' '.$copy_data[$i]->groupname : $copy_data[$i]->groupname,
+                        $points
+                    );     
+
         $table->data[] = $row;
+        $temp_holder = $copy_data[$i];
+        $copy_data[$i] = $copy_data[$sort_index];
+        $copy_data[$sort_index] = $temp_holder;
+        $sort_index++;
+    }
+    
+    $last_pos = 1;
+    for ($i=0; $i < count($table->data); $i++) {
+        if ($i==0) {
+            $table->data[$i]->cells[0] = $last_pos;
+            continue;
+        }
+        $prev_points = $table->data[$i-1]->cells[2];
+        $points = $table->data[$i]->cells[2];
+        if ($prev_points != $points) {
+            $last_pos++;
+            $table->data[$i]->cells[0] = $last_pos;
+        } else {
+            $table->data[$i]->cells[0] = $last_pos;
+        }
     }
 
     return html_writer::table($table);
@@ -255,7 +333,9 @@ function block_leaderboard_get_groups($config) {
     // Changed SQL query to count badges awarded to groups - Kiya Govek 5/16
 	$sql = "SELECT g.name as groupname,
 	        g.id as groupid,
-		    COUNT(badgetable.badgeid) as points
+	        g.picture as grouppicture,
+	        c.id as contextid,
+		    COUNT(badgetable.badgeid) as badges
         FROM {groups} g
         LEFT JOIN {groupings_groups} gg ON gg.groupid = g.id
         LEFT JOIN {groupings} gr ON gg.groupingid = gr.id
@@ -269,8 +349,7 @@ function block_leaderboard_get_groups($config) {
         INNER JOIN {role_assignments} ra ON ra.userid = u.id
         INNER JOIN {context} c ON c.id = ra.contextid
         WHERE ra.roleid = 5 AND c.instanceid = :courseid AND c.contextlevel = 50 AND gr.id = :groupingid
-		GROUP BY g.id
-		ORDER BY points DESC";
+		GROUP BY g.id";
     $params['courseid'] = $COURSE->id;
     $params['badgecourseid'] = $COURSE->id;
     if (isset($config->leaderboard_displaygrouping)) {
@@ -286,6 +365,25 @@ function block_leaderboard_get_groups($config) {
     return $groups;
 }
 
+/**
+* Kiya Govek
+* Check number of users in a group
+*
+* @param int
+* @param int
+*/
+function num_users_group($groupid) {
+    global $COURSE, $DB;
+    $sql = "SELECT COUNT(u.id) as users
+            FROM {groups} g
+            LEFT JOIN {groups_members} gm ON gm.groupid = g.id
+            LEFT JOIN {user} u ON gm.userid = u.id
+            WHERE g.id = :groupid";
+    $params['groupid'] = $groupid;
+    $db_return = array_values($DB->get_records_sql($sql, $params));
+    return $db_return[0]->users;
+}
+    
 /**
 * Kiya Govek
 * Get list of groups a user is in
@@ -341,4 +439,20 @@ function get_groupings() {
             WHERE gr.courseid = :courseid";
     $params['courseid'] = $COURSE->id;
     return array_values($DB->get_records_sql($sql, $params));
+}
+
+/**
+* Kiya Govek
+* Get user context id
+*
+* @return int
+*/
+function get_user_contextid($userid) {
+    global $DB;
+    $sql = "SELECT c.id AS contextid
+            FROM {user} u 
+            LEFT JOIN {context} c ON c.instanceid = u.id
+            WHERE c.contextlevel = 30 AND u.id = :userid";
+    $params['userid'] = $userid;
+    return array_values($DB->get_records_sql($sql,$params)) ? array_values($DB->get_records_sql($sql,$params))[0]->contextid : 0;
 }
